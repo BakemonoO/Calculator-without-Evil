@@ -1,5 +1,6 @@
 <template>
-  <div id="app" class="app">
+  <div id="app" class="app"
+  @keyup.enter="solver">
     <div class="calculatorValue">
       <div class="previous area"> {{ textArea }} </div>
       <div 
@@ -96,13 +97,13 @@
             this.calculatorValue = ''
             }
           } else if (this.operator === '%') {
-            if (this.result !== null) {
+          if (this.result !== null) {
               this.previousValue = this.result
-              this.preNumber = ''
+              this.preNumber = this.calculatorValue
             }
+            this.previousValue = this.result
             this.result = +this.previousValue * (+this.preNumber / 100)
-            this.previousValue = +this.previousValue * (+this.preNumber / 100)
-            this.textArea = this.result + ' ' + this.operator + ' '
+            this.textArea = this.previousValue + ' ' + this.operator + ' '
             this.calculatorValue = ''
           } else {
             if (this.result !== null) {
@@ -183,8 +184,45 @@
   },
     },
 
+    mounted() {
+
+      let arrButtons = [1,2,3,4,5,6,7,8,9,0, '+', '-', '%', '/']
+
+      document.addEventListener(`keydown`, (event, btn) => {
+        for (let i = 0; i < arrButtons.length; i++) {
+          if (event.key === `${arrButtons[i]}`)
+          this.pick(btn = `${arrButtons[i]}`)
+        }
+      })
+
+      document.addEventListener(`keydown`, (event, btn) => {
+        if(event.key === 'Enter') {
+          this.pick(btn = '=')
+        }
+      })
+      
+      document.addEventListener(`keydown`, (event, btn) => {
+        if(event.key === '*') {
+          this.pick(btn = 'x')
+        }
+      })
+      
+      document.addEventListener(`keydown`, (event, btn) => {
+        if(event.key === 'Backspace') {
+          this.pick(btn = '<=')
+        }
+      })
+
+      document.addEventListener(`keydown`, (event, btn) => {
+        if(event.key === 'Delete') {
+          this.pick(btn = 'C')
+        }
+      })
+    },
+
     computed: {
-    }
+
+    },
   }
   
 </script>
@@ -258,6 +296,11 @@
     background: rgb(60, 138, 226);
     border-color: rgb(60, 138, 226);
   }
+  
+  .btns:active {
+    background: rgb(25, 66, 112);
+    border-color: rgb(25, 66, 112);
+  }
 
   .number-button {
     background: #2E2F38;
@@ -266,6 +309,7 @@
 
   .operators {
     background: #4B5EFC;
-    border-color: #4B5EFC;;
+    border-color: #4B5EFC;
+
   }
 </style>
