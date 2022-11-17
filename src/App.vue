@@ -1,19 +1,27 @@
 <template>
   <div id="app" class="app">
-    <div class="toggle">
-      <button 
-      class="toggleBtn"></button>
+    <div class="toggle"
+    :class="{'whiteTheme': !darkTheme}">
+    <transition name="theme">
+      <button
+      :class="{'animationLight': !darkTheme, 'animationDark': darkTheme}"
+      @click="swapTheme"
+      class="toggleBtn"></button></transition>
     </div>
     
-    <div class="calculatorValue">
-      <div class="previous area"> {{ textArea }} </div>
+    <div class="calculatorValue"
+    :class="{'whiteTheme': !darkTheme}">
+      <div class="previous area"
+      :class="{'whiteTheme': !darkTheme}"> {{ textArea }} </div>
       <div 
+      :class="{'whiteTheme': !darkTheme}"
       class="area"
-      v-if="calculatorValue === ''">
-      {{ result || '0' }}
+      v-if="calculatorValue === ''"> 
+      {{ result || '0' }} 
       </div>
 
       <div 
+      :class="{'whiteTheme': !darkTheme}"
       class="area"
       v-else>
       {{ calculatorValue }}
@@ -23,7 +31,7 @@
         <button v-for="btn in btns" 
         class="btns"
         :key="btn.id"
-        :class="{'number-button': !isNaN(btn.name) || ['.', '<='].includes(btn.name), 'operators': ['/', 'x', '+', '-', 'C', '+/-', '%'].includes(btn.name)}"
+        :class="[!isNaN(btn.name) || ['.', '<='].includes(btn.name) ? 'number-button' : ['/', 'x', '+', '-', 'C', '+/-', '%'].includes(btn.name) ? 'operators' : 'equals', {'whiteTheme': !darkTheme}]"
         @click="!isNaN(btn.name) ? addNumber(btn.name) : ['.'].includes(btn.name) ? addDot(btn.name) : ['/', 'x', '+', '-', '%'].includes(btn.name) ? changeOperator(btn.name) : ['+/-', 'C', '<='].includes(btn.name) ? optionsCalc(btn.name) : getResult()"
         > {{ btn.name }} </button>
       </div>
@@ -65,7 +73,11 @@
         darkTheme: true,
       }
     },
+
     methods: {
+      swapTheme() {
+        this.darkTheme = !this.darkTheme
+      },
 
       addNumber(btn) {
         this.calculatorValue += btn
@@ -214,8 +226,7 @@
         } 
       }
     }
-        
-      },
+  },
 
       optionsCalc(btn) {
         if (btn === 'C') {
@@ -243,13 +254,6 @@
       }
     },
 
-    computed: {
-      thisTheme() {
-        return this.darkTheme ? 'Dark' : 'Light'
-      },
-    
-    },
-
     mounted() {
       let arrButtons = [1,2,3,4,5,6,7,8,9,0]
       let operators = ['+', '-', '/', '%']
@@ -266,23 +270,18 @@
             this.changeOperator(`${operators[i]}`)
           }
         }
-
         if (event.key === '.') {
           this.addDot('.')
         }
-
         if(event.key === '*') {
           this.changeOperator('x')
         }
-
         if(event.key === 'Enter') {
           this.getResult('=')
         }
-
         if(event.key === 'Backspace') {
           this.optionsCalc('<=')
         }
-
         if(event.key === 'Delete') {
           this.optionsCalc('C')
         }
@@ -292,7 +291,6 @@
 </script>
 
 <style>
-
 * {
   padding: 0;
   margin: 0;
@@ -350,26 +348,15 @@
   .btns {
     width: 20%;
     height: 50px;
-    background: #ef864b;
     color: white;
     font-size: 18px;
-    border: 1px solid #ef864b;
+    border: 1px solid;
     border-radius: 15px;
     margin: 5px;
     box-shadow: 3px 5px 5px rgba(0, 0, 0, 0.25);
   }
 
-  .btns:hover {
-    background: #f09a68;
-    border-color: #f09a68;
-  }
-  
-  .btns:active {
-    transform: scale(0.9);
-    box-shadow: none;
-  }
-
-  .number-button {
+ .number-button {
     background: #262d37;
     border-color: #262d37;
   }
@@ -378,16 +365,6 @@
     background: #2e3744;
     border-color: #2e3744;
   }
-
-  .operators {
-    background: #367b8a;
-    border-color: #367b8a;
-  }
-
-   .operators:hover {
-    background: #4991a1;
-    border-color: #4991a1;
-   }
 
   .toggle {
     height: 50px;
@@ -402,12 +379,64 @@
     margin-top: 50px;
   }
 
+ .whiteTheme {
+    background: #fff; 
+    border-color: #fff;
+    color: black;
+  }
+
+  .whiteTheme .number-button:hover {
+    background: rgb(243, 241, 241);
+    border-color:  rgb(243, 241, 241);
+  }
+
+  .whiteTheme .previous {
+    border-color: gray;
+  }
+
+  .equals {
+    background: #ef864b;
+    border: 1px solid #ef864b;
+  }
+
+  .equals:hover {
+    background: #f09a68;
+    border-color: #f09a68;
+  }
+  
+  .btns:active {
+    transform: scale(0.9);
+    box-shadow: none;
+  }
+
+ 
+
+  .operators {
+    background: #367b8a;
+    border-color: #367b8a;
+  }
+
+   .operators:hover {
+    background: #4991a1;
+    border-color: #4991a1;
+   }
+
   .toggleBtn {
     width:  40px;
     height: 40px;
     background: #367b8a;
     border: 1px solid #367b8a;;
     border-radius: 20px;
+  }
+
+  .animationLight {
+    transform: translateX(50px);
+    transition: transform 1s ease;
+  }
+
+  .animationDark {
+    transform: translateX(0px);
+    transition: transform 1s ease;
   }
 
 </style>
